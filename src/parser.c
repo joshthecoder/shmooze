@@ -24,12 +24,12 @@ void irc_parser_init(irc_parser_t* parser) {
   parser->state = STATE_START;
 }
 
-int irc_parser_execute(irc_parser_t* parser, uv_buf_t buffer) {
+int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len) {
   // Current position in the buffer being parsed.
-  char* b = buffer.base;
+  const char* b = buffer;
 
   // The end position of the buffer.
-  char* b_end = b + buffer.len;
+  const char* b_end = b + len;
 
   unsigned char state = parser->state;
   irc_message_t* message = &parser->message;
@@ -106,12 +106,12 @@ int irc_parser_execute(irc_parser_t* parser, uv_buf_t buffer) {
           case ' ':
             // Message has another parameter to be scanned.
             state = STATE_PARAMETER;
+            continue;
 
           case '\r':
             // End of message.
             state = STATE_END;
-
-          continue;
+            continue;
         }
 
         break;
@@ -126,7 +126,8 @@ int irc_parser_execute(irc_parser_t* parser, uv_buf_t buffer) {
         break;
 
       case STATE_END:
-        if (parser->last_error = parser->message_cb(message)) {
+        DATA_NUL(parser);
+        if ((parser->last_error = parser->message_cb(message))) {
           // TODO: verify this is correct bytes parsed.
           return b_end - b;
         }
@@ -141,6 +142,6 @@ int irc_parser_execute(irc_parser_t* parser, uv_buf_t buffer) {
 
   parser->state = state;
 
-  return buffer.len;
+  return len;
 }
 

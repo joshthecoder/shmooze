@@ -47,6 +47,6 @@ void irc_parser_init(irc_parser_t* parser);
 // Execute parser on the buffer of data invoking the
 // callback for each fully parsed message. Returns
 // the number of bytes parsed.
-int irc_parser_execute(irc_parser_t* parser, uv_buf_t buffer);
+int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len);
 
 #endif
