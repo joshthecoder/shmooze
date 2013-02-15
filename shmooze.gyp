@@ -34,6 +34,28 @@
         'test/test-list.h',
         'test/test-parse-message.c'
       ]
+    },
+
+    {
+      'target_name': 'run-shmooze-benchmarks',
+      'type': 'executable',
+      'dependencies': [
+        'libshmooze',
+        'deps/libuv/uv.gyp:libuv'
+      ],
+      'include_dirs': [
+        'include'
+      ],
+      'sources': [
+        'test/run-benchmarks.c',
+        'test/runner-unix.c',
+        'test/runner-unix.h',
+        'test/runner.c',
+        'test/runner.h',
+        'test/task.h',
+        'test/benchmark-list.h',
+        'test/benchmark-parse-messages.c'
+      ]
     }
   ]
 }
