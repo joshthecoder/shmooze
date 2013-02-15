@@ -31,11 +31,8 @@
         'test/runner.c',
         'test/runner.h',
         'test/task.h',
-        'test/test-ipc.c',
-        'test/test-ipc-send-recv.c',
         'test/test-list.h',
-        'test/test-parse-message.c',
-        'test/test-stdio-over-pipes.c'
+        'test/test-parse-message.c'
       ]
     }
   ]
