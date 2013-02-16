@@ -22,6 +22,7 @@ enum parser_state {
 void irc_parser_init(irc_parser_t* parser) {
   parser->last_error = 0;
   parser->state = STATE_START;
+  parser->message_cb = 0;
 }
 
 int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len) {
@@ -127,9 +128,8 @@ int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len) {
 
       case STATE_END:
         DATA_NUL(parser);
-        if ((parser->last_error = parser->message_cb(message))) {
-          // TODO: verify this is correct bytes parsed.
-          return b_end - b;
+        if (parser->message_cb && (parser->last_error = parser->message_cb(message))) {
+          return bytes_parsed;
         }
         state = STATE_START;
         continue;
