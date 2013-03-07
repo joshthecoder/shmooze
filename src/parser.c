@@ -10,6 +10,9 @@ enum parser_state {
   STATE_END
 };
 
+// IRC messages cannot exceed 512 bytes.
+#define MESSAGE_MAX_LENGTH 512
+
 /*
  * These macros are provided for accessing the 512 byte
  * buffer used by the parser for holding message parts.
@@ -26,19 +29,16 @@ void irc_parser_init(irc_parser_t* parser) {
 }
 
 int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len) {
-  // Current position in the buffer being parsed.
-  const char* b = buffer;
-
-  // The end position of the buffer.
-  const char* b_end = b + len;
+  // Counts the number of bytes parsed from the buffer.
+  size_t bytes_parsed = 0;
 
   unsigned char state = parser->state;
   irc_message_t* message = &parser->message;
 
-  while (b != b_end) {
+  while (bytes_parsed < len) {
   // The main parser loop which runs until buffer end is reached.
     // Get message character to parse and advance to next byte.
-    char ch = *(b++);
+    char ch = *(buffer + bytes_parsed++);
 
     // Process the current message byte based on current state.
     switch (state) {
@@ -48,15 +48,21 @@ int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len) {
         message->parameter_count = 0;
         parser->len = 0;
 
-        if (ch == ':') {
-          // Message has a prefix we need to scan.
-          state = STATE_PREFIX;
-          message->prefix = DATA_END(parser);
-          continue;
-        }
-        message->command = DATA_END(parser);
+        switch (ch) {
+          case ':':
+            // Message has a prefix we need to scan.
+            state = STATE_PREFIX;
+            message->prefix = DATA_END(parser);
+            continue;
 
-        // If message has no prefix, skip to scanning the command name.
+          case ' ':
+            // Illegal to have first byte be a whitespace token.
+            parser->last_error = PARSER_ILLEGAL_TOKEN;
+            return bytes_parsed;
+        }
+
+        // If the message has no prefix, skip to parsing the command.
+        message->command = DATA_END(parser);
         state = STATE_COMMAND;
         break;
 
@@ -142,6 +148,6 @@ int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len) {
 
   parser->state = state;
 
-  return len;
+  return bytes_parsed;
 }
 

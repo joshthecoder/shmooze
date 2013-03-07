@@ -1,3 +1,5 @@
+// A set of tests to verify valid IRC messages are parsed correctly.
+
 #include "irc.h"
 
 #include "task.h"

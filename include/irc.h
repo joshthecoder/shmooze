@@ -6,10 +6,6 @@
 typedef struct irc_message_s irc_message_t;
 typedef struct irc_parser_s irc_parser_t;
 
-typedef enum {
-  IRC_PASSWORD
-} irc_command;
-
 struct irc_message_s {
   const char* prefix;
   const char* command;
@@ -23,22 +19,28 @@ struct irc_message_s {
  */
 typedef int (*irc_message_cb)(irc_message_t* msg);
 
+// An illegal token was encountered while parsing message.
+#define PARSER_ILLEGAL_TOKEN 0x01
+
+// The message has exceeded the 512 byte length limit.
+#define PARSER_MESSAGE_TOO_LONG 0x02
+
 struct irc_parser_s {
   irc_message_cb message_cb;
 
-  /*
-   * The last error that caused the parser to stop.
-   * If a non-zero value was returned from irc_message_cb
-   * this variable will contain that value.
-   */
+  // If an error occurred while parsing a message
+  // this will contain a non-zero error code.
+  // All errors are fatal and the connection providing
+  // the data should be terminated. The parser may only
+  // be executed again if re-initialized to clear the error.
   int last_error;
 
-  // --- Private ---
-
+  // Private.
   unsigned char state;
   char data[512];
-  int len;
+  int data_len;
   irc_message_t message;
+  int msg_len;
 };
 
 // Initialize an IRC message parser instance.

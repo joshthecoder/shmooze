@@ -32,7 +32,8 @@
         'test/runner.h',
         'test/task.h',
         'test/test-list.h',
-        'test/test-parse-message.c'
+        'test/test-parse-message.c',
+        'test/test-parse-illegal.c'
       ]
     },
 
