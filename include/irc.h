@@ -38,9 +38,8 @@ struct irc_parser_s {
   // Private.
   unsigned char state;
   char data[512];
-  int data_len;
+  int len;
   irc_message_t message;
-  int msg_len;
 };
 
 // Initialize an IRC message parser instance.

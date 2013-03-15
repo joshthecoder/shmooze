@@ -18,7 +18,7 @@ static int parse_message(const char* msg) {
 // Messages cannot have whitespace as the first byte.
 // This should cause an PARSER_ILLEGAL_TOKEN error code.
 TEST_IMPL(parse_illegal_first_byte_whitespace) {
-  ASSERT(parse_message("BAD\r\n") == PARSER_ILLEGAL_TOKEN);
+  ASSERT(parse_message(" BAD\r\n") == PARSER_ILLEGAL_TOKEN);
   return 0;
 }
 
