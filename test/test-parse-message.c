@@ -102,3 +102,13 @@ TEST_IMPL(parse_message_mixed) {
   return 0;
 }
 
+TEST_IMPL(parse_command) {
+  static const char *pass = "PASS",
+                    *pass_lc = "pass",
+                    *unknown = "FOOBAR";
+  ASSERT(irc_parse_command(pass, strlen(pass)) == IRC_PASS);
+  ASSERT(irc_parse_command(pass_lc, strlen(pass_lc)) == IRC_PASS);
+  ASSERT(irc_parse_command(unknown, strlen(unknown)) == IRC_UNKNOWN);
+  return 0;
+}
+

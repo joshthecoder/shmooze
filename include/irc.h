@@ -9,7 +9,7 @@ typedef struct irc_parser_s irc_parser_t;
 struct irc_message_s {
   const char* prefix;
   const char* command;
-  const char* parameters[10];
+  const char* parameters[15];
   int parameter_count;
 };
 
@@ -49,5 +49,52 @@ void irc_parser_init(irc_parser_t* parser);
 // callback for each fully parsed message. Returns
 // the number of bytes parsed.
 int irc_parser_execute(irc_parser_t* parser, const char* buffer, size_t len);
+
+typedef enum {
+  IRC_PASS,
+  IRC_NICK,
+  IRC_USER,
+  IRC_SERVER,
+  IRC_OPER,
+  IRC_QUIT,
+  IRC_SQUIT,
+  IRC_JOIN,
+  IRC_PART,
+  IRC_MODE,
+  IRC_TOPIC,
+  IRC_NAMES,
+  IRC_LIST,
+  IRC_INVITE,
+  IRC_KICK,
+  IRC_VERSION,
+  IRC_STATS,
+  IRC_LINKS,
+  IRC_TIME,
+  IRC_CONNECT,
+  IRC_TRACE,
+  IRC_ADMIN,
+  IRC_INFO,
+  IRC_PRIVMSG,
+  IRC_NOTICE,
+  IRC_WHO,
+  IRC_WHOIS,
+  IRC_WHOWAS,
+  IRC_KILL,
+  IRC_PING,
+  IRC_PONG,
+  IRC_ERROR,
+  IRC_AWAY,
+  IRC_REHASH,
+  IRC_RESTART,
+  IRC_SUMMON,
+  IRC_USERS,
+  IRC_WALLOPS,
+  IRC_USERHOST,
+  IRC_ISON,
+  IRC_UNKNOWN
+} irc_command;
+
+// Parse the command type from a buffer containing text.
+irc_command irc_parse_command(const char* buffer, size_t len);
 
 #endif
